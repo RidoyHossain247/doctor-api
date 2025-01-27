@@ -96,7 +96,7 @@ exports.getDashboard = async (req, res, next) => {
     // Handle errors
     res.status(500).json({
       success: false,
-      message: "Failed to fetch doctor data",
+      message: "Failed to fetch dashboard data",
       error: error.message,
     });
   }
