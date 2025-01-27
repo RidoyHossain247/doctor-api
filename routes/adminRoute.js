@@ -1,7 +1,7 @@
 const adminRoute = require('express').Router()
 const jwt = require('jsonwebtoken')
 
-const {adminLogin,adminRegister} = require('../controllers/adminController');
+const {adminLogin,adminRegister,getDashboard} = require('../controllers/adminController');
 
 
 const authenticate = (req, res, next) => {
@@ -25,5 +25,6 @@ const authenticate = (req, res, next) => {
 // admin
 adminRoute.post('/',adminLogin)
 adminRoute.post('/register',adminRegister)
+adminRoute.get('/dashboard',getDashboard)
 
 module.exports = adminRoute

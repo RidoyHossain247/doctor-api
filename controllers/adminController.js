@@ -1,9 +1,12 @@
-const AdminSchema = require('../models/adminModel');
-const jwt = require('jsonwebtoken')
-const bcrypt = require('bcrypt')
+const DoctorSchema = require("../models/doctorModel");
+const AdminSchema = require("../models/adminModel");
+const AppointmentsSchema = require("../models/appointmentsModel");
+const PatientsSchema = require("../models/userModel");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
-exports.adminLogin = async(req,res,next)=>{
-  const {email,password} = req.body
+exports.adminLogin = async (req, res, next) => {
+  const { email, password } = req.body;
   try {
     const user = await AdminSchema.findOne({ email });
 
@@ -29,29 +32,21 @@ exports.adminLogin = async(req,res,next)=>{
     res.status(200).json({
       message: "Login successful",
       token: token,
-      user
+      user,
     });
   } catch (error) {
     res.status(401).json({
-      message:'Failed to login',
-      error:error.message
-    })
+      message: "Failed to login",
+      error: error.message,
+    });
   }
-}
+};
 
 exports.adminRegister = async (req, res, next) => {
-  const {
-    name,
-    email,
-    password,
-  } = req.body;
+  const { name, email, password } = req.body;
 
   // Validate that all required fields are provided
-  if (
-    !name ||
-    !email ||
-    !password
-  ) {
+  if (!name || !email || !password) {
     return res.status(400).json({
       message: "All fields are required.",
     });
@@ -81,6 +76,27 @@ exports.adminRegister = async (req, res, next) => {
 
     res.status(400).json({
       message: "Failed to create user",
+      error: error.message,
+    });
+  }
+};
+
+exports.getDashboard = async (req, res, next) => {
+  try {
+    const doctor = await DoctorSchema.countDocuments();
+    const appointments = await AppointmentsSchema.countDocuments();
+    const patients = await PatientsSchema.countDocuments();
+
+    res.status(200).json({
+      doctor,
+      appointments,
+      patients,
+    });
+  } catch (error) {
+    // Handle errors
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch doctor data",
       error: error.message,
     });
   }
