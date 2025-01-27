@@ -86,11 +86,14 @@ exports.getDashboard = async (req, res, next) => {
     const doctor = await DoctorSchema.countDocuments();
     const appointments = await AppointmentsSchema.countDocuments();
     const patients = await PatientsSchema.countDocuments();
-
+    const latestAppointments = await AppointmentsSchema.find()
+      .sort({ createdAt: -1 })
+      .limit(5);
     res.status(200).json({
       doctor,
       appointments,
       patients,
+      latestAppointments
     });
   } catch (error) {
     // Handle errors
