@@ -88,7 +88,8 @@ exports.getDashboard = async (req, res, next) => {
     const patients = await PatientsSchema.countDocuments();
     const latestAppointments = await AppointmentsSchema.find()
       .sort({ createdAt: -1 })
-      .limit(5);
+      .limit(5)
+      .select('patient date');
     res.status(200).json({
       doctor,
       appointments,
