@@ -1,9 +1,14 @@
 const DoctorSchema = require("../models/doctorModel");
 const AdminSchema = require("../models/adminModel");
 const AppointmentsSchema = require("../models/appointmentsModel");
-const PatientsSchema = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+
+const blacklistedTokens = new Set();
+
+
+
+
 
 exports.adminLogin = async (req, res, next) => {
   const { email, password } = req.body;
@@ -85,16 +90,25 @@ exports.getDashboard = async (req, res, next) => {
   try {
     const doctor = await DoctorSchema.countDocuments();
     const appointments = await AppointmentsSchema.countDocuments();
-    const patients = await PatientsSchema.countDocuments();
-    const latestAppointments = await AppointmentsSchema.find()
+    const patients = await AppointmentsSchema.countDocuments({
+      isComplete: true,
+    });   
+     const patientsDelete = await AppointmentsSchema.countDocuments({
+      isDelete: true,
+    });
+    const latestAppointments = await AppointmentsSchema.find({
+      isDelete: false,
+      isComplete: false,
+    })
       .sort({ createdAt: -1 })
-      .limit(5)
-      .select('patient date');
+      .limit(10)
+      .select("patient date");
     res.status(200).json({
       doctor,
       appointments,
       patients,
-      latestAppointments
+      patientsDelete,
+      latestAppointments,
     });
   } catch (error) {
     // Handle errors
@@ -105,3 +119,11 @@ exports.getDashboard = async (req, res, next) => {
     });
   }
 };
+
+exports.adminLogout =async (req,res,nex)=>{
+  const token = req.header('Authorization')?.split(' ')[1];
+  if (token) {
+    blacklistedTokens.add(token); 
+  }
+  res.status(200).json({ message: 'Logged out successfully' });
+}

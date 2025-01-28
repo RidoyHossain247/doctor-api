@@ -19,12 +19,12 @@ const authenticate = (req, res, next) => {
   });
 };
 
-doctorRouter.get('/',getDoctor)
-doctorRouter.post('/create',doctorController)
-doctorRouter.post('/appointments/create',appointmentsCreate)
-doctorRouter.get('/appointments',getAppointments)
-doctorRouter.patch('/appointments/complete/:id',appointmentsComplete)
-doctorRouter.patch('/appointments/delete/:id',appointmentsDelete)
+doctorRouter.get('/',authenticate,getDoctor)
+doctorRouter.post('/create',authenticate,doctorController)
+doctorRouter.post('/appointments/create',authenticate,appointmentsCreate)
+doctorRouter.get('/appointments',authenticate,getAppointments)
+doctorRouter.patch('/appointments/complete/:_id',authenticate,appointmentsComplete)
+doctorRouter.patch('/appointments/delete/:_id',authenticate,appointmentsDelete)
 
 
 module.exports = doctorRouter

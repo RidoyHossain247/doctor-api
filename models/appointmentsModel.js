@@ -22,6 +22,11 @@ const appointmentsSchema = new mongoose.Schema(
       trim: true,
       required: true,
     },
+    mobile: {
+      type: String,
+      trim: true,
+      required: true,
+    },
     doctorName: {
       type: String,
       trim: true,
