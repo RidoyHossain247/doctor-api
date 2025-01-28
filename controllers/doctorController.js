@@ -152,7 +152,6 @@ exports.appointmentsCreate = async (req, res, next) => {
   }
 
   try {
-
     const newUser = await AppointmentsModel.create({
       patient,
       speciality,
@@ -167,11 +166,59 @@ exports.appointmentsCreate = async (req, res, next) => {
       user: newUser,
     });
   } catch (error) {
-    
-
     res.status(400).json({
       message: "Failed to appointments patient",
       error: error.message,
     });
+  }
+};
+
+exports.appointmentsComplete = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const updatedAppointment = await AppointmentsModel.findByIdAndUpdate(
+      id,
+      {isComplete: true },
+      { new: true, runValidators: true } // Merges with the existing document
+    );
+
+    if (!updatedAppointment) {
+      return res.status(404).json({ message: "Appointment not found." });
+    }
+
+    res.status(200).json({
+      message: "Appointment complete successfully.",
+      appointment: updatedAppointment,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error updating appointment.", error: error.message });
+  }
+};
+
+exports.appointmentsDelete = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const updatedAppointment = await AppointmentsModel.findByIdAndUpdate(
+      id,
+      { isDelete: true},
+      { new: true, runValidators: true } // Merges with the existing document
+    );
+
+    if (!updatedAppointment) {
+      return res.status(404).json({ message: "Appointment not found." });
+    }
+
+    res.status(200).json({
+      message: "Appointment delete successfully.",
+      appointment: updatedAppointment,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error updating appointment.", error: error.message });
   }
 };

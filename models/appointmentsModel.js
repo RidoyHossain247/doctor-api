@@ -16,8 +16,8 @@ const appointmentsSchema = new mongoose.Schema(
       type: Number,
       trim: true,
       required: true,
-    },   
-     date: {
+    },
+    date: {
       type: String,
       trim: true,
       required: true,
@@ -32,7 +32,14 @@ const appointmentsSchema = new mongoose.Schema(
       trim: true,
       required: true,
     },
-
+    isComplete: {
+      type: Boolean,
+      default: false,
+    }, 
+    isDelete: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
