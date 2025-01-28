@@ -8,11 +8,12 @@ const cors = require("cors");
 dotenv.config();
 
 const app = express();
+
 app.use(
   cors({
-    // origin: "https://localhost:3000",
-    origin: "https://doctor-admin-pwra.onrender.com",
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    origin: "http://localhost:3000",
+    // origin: "https://doctor-admin-pwra.onrender.com",
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     allowedHeaders: ["Authorization", "Content-Type"],
   })
 );

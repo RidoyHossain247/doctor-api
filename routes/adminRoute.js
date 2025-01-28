@@ -1,7 +1,7 @@
 const adminRoute = require('express').Router()
 const jwt = require('jsonwebtoken')
 
-const {adminLogin,adminRegister,getDashboard} = require('../controllers/adminController');
+const {adminLogin,adminRegister,getDashboard,adminLogout} = require('../controllers/adminController');
 
 
 const authenticate = (req, res, next) => {
@@ -21,10 +21,22 @@ const authenticate = (req, res, next) => {
   });
 };
 
+const blacklistedTokens = new Set();
+
+
+const isTokenValid = (req, res, next) => {
+  const token = req.header('Authorization')?.split(' ')[1];
+  if (blacklistedTokens.has(token)) {
+    return res.status(401).json({ message: 'Token is invalid or blacklisted' });
+  }
+  next();
+};
+
 
 // admin
 adminRoute.post('/',adminLogin)
 adminRoute.post('/register',adminRegister)
-adminRoute.get('/dashboard',getDashboard)
+adminRoute.get('/dashboard',authenticate,getDashboard)
+adminRoute.post('/logout',isTokenValid,adminLogout)
 
 module.exports = adminRoute

@@ -113,9 +113,10 @@ exports.getAppointments = async (req, res, next) => {
     const skip = (page - 1) * limit; // Calculate the number of documents to skip
     // Fetch paginated results
     const doctors = await AppointmentsModel.find()
-      .skip(skip) // Skip the first (page-1)*limit documents
-      .limit(limit) // Limit the number of documents returned
-      .exec();
+    .sort({ date: -1 })
+    .skip(skip) 
+    .limit(limit) 
+    .exec();
 
     // Get the total count of documents for pagination info
     const totalDoctors = await AppointmentsModel.countDocuments();
@@ -143,9 +144,9 @@ exports.getAppointments = async (req, res, next) => {
 };
 
 exports.appointmentsCreate = async (req, res, next) => {
-  const { patient, speciality, age, date, doctorName, fees } = req.body;
+  const { patient, speciality, age,mobile, date, doctorName, fees } = req.body;
 
-  if (!patient || !speciality || !age || !date || !doctorName || !fees) {
+  if (!patient || !speciality || !age || !date || !doctorName || !fees || !mobile) {
     return res.status(400).json({
       message: "All fields are required.",
     });
@@ -156,6 +157,7 @@ exports.appointmentsCreate = async (req, res, next) => {
       patient,
       speciality,
       age,
+      mobile,
       date,
       doctorName,
       fees,
@@ -174,11 +176,11 @@ exports.appointmentsCreate = async (req, res, next) => {
 };
 
 exports.appointmentsComplete = async (req, res, next) => {
-  const { id } = req.params;
+  const { _id } = req.params;
 
   try {
     const updatedAppointment = await AppointmentsModel.findByIdAndUpdate(
-      id,
+      _id,
       {isComplete: true },
       { new: true, runValidators: true } // Merges with the existing document
     );
@@ -199,11 +201,10 @@ exports.appointmentsComplete = async (req, res, next) => {
 };
 
 exports.appointmentsDelete = async (req, res, next) => {
-  const { id } = req.params;
-
+  const { _id } = req.params;
   try {
     const updatedAppointment = await AppointmentsModel.findByIdAndUpdate(
-      id,
+      _id,
       { isDelete: true},
       { new: true, runValidators: true } // Merges with the existing document
     );
