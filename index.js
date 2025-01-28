@@ -11,8 +11,8 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
-    // origin: "https://doctor-admin-pwra.onrender.com",
+    // origin: "http://localhost:3000",
+    origin: "https://dev-doctor-admin.onrender.com",
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     allowedHeaders: ["Authorization", "Content-Type"],
   })
