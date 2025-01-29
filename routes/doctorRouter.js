@@ -1,6 +1,6 @@
 const doctorRouter = require('express').Router()
 const jwt = require('jsonwebtoken')
-const {doctorController,getDoctor,appointmentsCreate,getAppointments,appointmentsComplete,appointmentsDelete} = require('../controllers/doctorController');
+const {doctorController,getDoctor,appointmentsCreate,getAppointments,appointmentsComplete,appointmentsDelete,statusUpdate} = require('../controllers/doctorController');
 
 const authenticate = (req, res, next) => {
   const token = req.headers["authorization"]?.split(" ")[1]; // Extract token from "Bearer <token>"
@@ -23,8 +23,9 @@ doctorRouter.get('/',getDoctor)
 doctorRouter.post('/create',authenticate,doctorController)
 doctorRouter.post('/appointments/create',authenticate,appointmentsCreate)
 doctorRouter.get('/appointments',authenticate,getAppointments)
-doctorRouter.patch('/appointments/complete/:_id',authenticate,appointmentsComplete)
+doctorRouter.patch('/appointments/complete/:_id',appointmentsComplete)
 doctorRouter.patch('/appointments/delete/:_id',authenticate,appointmentsDelete)
+doctorRouter.patch('/statusUpdate/:_id',authenticate,statusUpdate)
 
 
 module.exports = doctorRouter

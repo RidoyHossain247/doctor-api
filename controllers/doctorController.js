@@ -113,10 +113,10 @@ exports.getAppointments = async (req, res, next) => {
     const skip = (page - 1) * limit; // Calculate the number of documents to skip
     // Fetch paginated results
     const doctors = await AppointmentsModel.find()
-    .sort({ date: -1 })
-    .skip(skip) 
-    .limit(limit) 
-    .exec();
+      .sort({ date: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
 
     // Get the total count of documents for pagination info
     const totalDoctors = await AppointmentsModel.countDocuments();
@@ -144,9 +144,17 @@ exports.getAppointments = async (req, res, next) => {
 };
 
 exports.appointmentsCreate = async (req, res, next) => {
-  const { patient, speciality, age,mobile, date, doctorName, fees } = req.body;
+  const { patient, speciality, age, mobile, date, doctorName, fees } = req.body;
 
-  if (!patient || !speciality || !age || !date || !doctorName || !fees || !mobile) {
+  if (
+    !patient ||
+    !speciality ||
+    !age ||
+    !date ||
+    !doctorName ||
+    !fees ||
+    !mobile
+  ) {
     return res.status(400).json({
       message: "All fields are required.",
     });
@@ -179,16 +187,14 @@ exports.appointmentsComplete = async (req, res, next) => {
   const { _id } = req.params;
 
   try {
-    const updatedAppointment = await AppointmentsModel.findByIdAndUpdate(
-      _id,
-      {isComplete: true },
-      { new: true, runValidators: true } // Merges with the existing document
-    );
+    const updatedAppointment = await AppointmentsModel.findById(_id);
 
     if (!updatedAppointment) {
       return res.status(404).json({ message: "Appointment not found." });
     }
+    updatedAppointment.isComplete = true;
 
+    await updatedAppointment.save();
     res.status(200).json({
       message: "Appointment complete successfully.",
       appointment: updatedAppointment,
@@ -203,16 +209,15 @@ exports.appointmentsComplete = async (req, res, next) => {
 exports.appointmentsDelete = async (req, res, next) => {
   const { _id } = req.params;
   try {
-    const updatedAppointment = await AppointmentsModel.findByIdAndUpdate(
-      _id,
-      { isDelete: true},
-      { new: true, runValidators: true } // Merges with the existing document
-    );
+    const updatedAppointment = await AppointmentsModel.findById(_id);
 
     if (!updatedAppointment) {
       return res.status(404).json({ message: "Appointment not found." });
     }
 
+    updatedAppointment.isDelete = true;
+
+    await updatedAppointment.save();
     res.status(200).json({
       message: "Appointment delete successfully.",
       appointment: updatedAppointment,
@@ -221,5 +226,28 @@ exports.appointmentsDelete = async (req, res, next) => {
     res
       .status(500)
       .json({ message: "Error updating appointment.", error: error.message });
+  }
+};
+exports.statusUpdate = async (req, res, next) => {
+  const { _id } = req.params;
+  try {
+    const doctor = await DoctorSchema.findById(_id);
+
+    if (!doctor) {
+      return res.status(404).json({ message: "Doctor not found." });
+    }
+
+    // Toggle the isAvailable status
+    doctor.isAvailable = !doctor.isAvailable;
+    await doctor.save(); // Save the updated doctor
+
+    res.status(200).json({
+      message: "Doctor status updated successfully.",
+      doctor,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error updating doctor status.", error: error.message });
   }
 };
