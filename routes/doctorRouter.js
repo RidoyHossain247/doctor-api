@@ -19,7 +19,7 @@ const authenticate = (req, res, next) => {
   });
 };
 
-doctorRouter.get('/',authenticate,getDoctor)
+doctorRouter.get('/',getDoctor)
 doctorRouter.post('/create',authenticate,doctorController)
 doctorRouter.post('/appointments/create',authenticate,appointmentsCreate)
 doctorRouter.get('/appointments',authenticate,getAppointments)
